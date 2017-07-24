@@ -22,6 +22,7 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
     } // class
 
 **A template file**
+
     <!DOCTYPE html>
     <html>
         <head>
