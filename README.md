@@ -3,7 +3,7 @@ PHP Renderer for [Chubby](https://github.com/a3gz/chubby).
 
 Chubby View is a PHP renderer that facilitates a very handy way of rendering views with Slim. 
 
-**A template class**
+**A template**
 
     class DefaultTemplate extends \Chubby\View\Template 
     {
@@ -21,13 +21,12 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
         protected $template = 'src/app/views/templates/default-template.php';
     } // class
 
-**A template file**
+`src/app/views/templates/default-template.php`
 
     <!DOCTYPE html>
     <html>
         <head>
             <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
             <chubby-styles></chubby-styles>
         </head>
@@ -41,7 +40,14 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
         </body>
     </html>
 
-**A component**
+**How to use** 
+
+    $tpl = new \Templates\DefaultTemplate();
+    $tpl->define('content', 'src/app/views/components/hello')
+        ->setData(['name' => $name])
+        ->write( $response );
+
+`src/app/views/components/hello.php`
 
     <chubby-scripts>
         <script>
@@ -69,20 +75,12 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
         <strong><?php echo "Bye"; ?></strong>
     </div>
 
-**How to use** 
-
-    $tpl = new \Templates\DefaultTemplate();
-    $tpl->define('content', 'src/app/views/components/hello')
-        ->setData(['name' => $name])
-        ->write( $response );
-
 **Resulting HTML file**
 
     <!DOCTYPE html>
     <html>
         <head>
             <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
             <style>
                 .hello strong {
