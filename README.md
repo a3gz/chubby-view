@@ -41,6 +41,7 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
     </html>
 
 **A component**
+
     <chubby-scripts>
         <script>
         console.log('Hello', '<?php echo $this->name; ?>');
