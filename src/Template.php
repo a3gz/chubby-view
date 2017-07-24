@@ -196,9 +196,7 @@ class Template
         $componentFileName = $this->getPreparedPath( $componentFileName );
 
         if ( !is_readable($componentFileName)  ) {
-            echo "error: {$component}<br>";
-            return;
-            // throw new \Exception("Unable to render `{$component}` (`{$componentFileName}`).");
+            throw new \Exception("Unable to render `{$component}` (`{$componentFileName}`).");
         }
 
         // Export data to the output 
