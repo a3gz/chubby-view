@@ -75,3 +75,47 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
     $tpl->define('content', 'src/app/views/components/hello')
         ->setData(['name' => $name])
         ->write( $response );
+
+**Resulting HTML file**
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+            <style>
+                .hello strong {
+                    color: blue; 
+                    font-size: 16px;
+                }
+                .bye strong {
+                    color: green;
+                }
+            </style>
+
+        </head>
+        
+        <body>
+            <header>
+                <h1>Welcome to Chubby 2</h1>
+                <strong>An application template for Slim 3</strong>
+            </header>        
+
+            <div class="hello">
+                <strong>Hello world</strong>
+            </div>
+
+            <div class="bye">
+                <strong>Bye</strong>
+            </div>
+
+            <footer>
+                by <a href="https://www.roetal.com">Alejandro Arbiza</a>
+            </footer>
+            
+            <script>
+                console.log('Hello', 'world');
+            </script>
+        </body>
+    </html>
