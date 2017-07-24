@@ -69,7 +69,7 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
         <strong><?php echo "Bye"; ?></strong>
     </div>
 
-**How to use 
+**How to use** 
 
     $tpl = new \Templates\DefaultTemplate();
     $tpl->define('content', 'src/app/views/components/hello')
