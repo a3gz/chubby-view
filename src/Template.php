@@ -9,6 +9,16 @@ namespace Chubby\View;
 class Template 
 {
     /**
+     * @var mixed 
+     */
+    protected $appPath;
+
+    /**
+     * @var array
+     */
+    protected $components = [];
+
+    /**
      * $data 
      *
      * @var array $data Array of (key => value) pars having used in the view. 
@@ -43,19 +53,18 @@ class Template
         'chubby-scripts' => [],
         'chubby-styles' => []
     ];
-    
-    /**
-     * @var array
-     */
-    protected $components = [];
 
     
     
     /**
-     *
+     * Sub-classes must call parent::__construct() so the following things happen:
+     * 1.   The components defined in the sub-class are merged with those defined by the 
+     *      class' parent. 
      */
-    public function __construct()
+    public function __construct( $appPath = null )
     {
+        $this->appPath = rtrim($appPath, '/'); 
+
         // Merge components from the child class
         $class = get_called_class();
         while ( $class = get_parent_class($class) ) {
@@ -121,15 +130,18 @@ class Template
 
 
     /**
-     *
+     * 
      * @param string $path
      * @return string
      */
     protected function getPreparedPath( $path ) 
     {
         if ( substr( $path, 0, 1 ) != '/' ) {
-            // The file is expected to exist somewhere inside the app's private tree 
-            $path = realpath( PRIVATE_APP_PATH . "/{$path}" );
+            $appPath = '';
+            if ( !empty($this->appPath) ) {
+                $appPath = $this->appPath . '/';
+            }
+            $path = realpath( $appPath . $path );
         }
         return $path;
     } // getPreparedPath()
