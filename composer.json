@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "sunra/php-simple-html-dom-parser": "2.0.0",
+        "a3gz/php-simple-html-dom-parser": "2.0.0",
         "psr/http-message": "^1.0"
     }, 
     "autoload": {
