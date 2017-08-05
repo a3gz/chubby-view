@@ -12,8 +12,14 @@
             "homepage": "https://www.roetal.com"
 		}
 	],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/a3gz/php-simple-html-dom-parser"
+        }
+    ],
     "require": {
-        "a3gz/sunra-dom-parser": "v1.0.0",
+        "sunra/php-simple-html-dom-parser": "2.0.0",
         "psr/http-message": "^1.0"
     }, 
     "autoload": {

@@ -6,6 +6,8 @@
  */
 namespace Chubby\View;
 
+use Sunra\PhpSimpleHtmlDomParser\HtmlDomParser;
+
 class Template 
 {
     /**
@@ -156,7 +158,7 @@ class Template
      */
     private function preProcessComponent( $input )
     {
-        $dom = \SunraDomParser\HtmlDomParser::fromString( $input );
+        $dom = HtmlDomParser::fromString( $input );
         $output = $input;
         if ( is_object($dom) ) {
             foreach( $this->placeholders as $placeholder => $content ) {
@@ -269,7 +271,7 @@ class Template
             
             $dirty = false;
 
-            $dom = \SunraDomParser\HtmlDomParser::fromString( $buffer );
+            $dom = HtmlDomParser::fromString( $buffer );
             
             // Inject custom placeholders content into the final page.
             foreach( $this->placeholders as $placeholder => $content ) {
