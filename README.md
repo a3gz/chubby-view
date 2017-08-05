@@ -42,10 +42,10 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
 
 **How to use** 
 
-    $tpl = new \Templates\DefaultTemplate();
+    $tpl = new \Templates\DefaultTemplate('path/to/templates');
 
-    // The component path here is relative, the constant
-    // PRIVATE_APP_PATH is used as base
+    // The component path here is relative, 
+    // to th path/to/template given in the constructor 
     $tpl->define('content', 'src/app/views/components/hello')
         ->setData(['name' => $name])
         ->write( $response );
@@ -127,23 +127,3 @@ Chubby View is a PHP renderer that facilitates a very handy way of rendering vie
             </script>
         </body>
     </html>
-
-## Without Chubby
-
-If you want to use this package without Chubby you need to define the constant `PRIVATE_APP_PATH` to point to your application's private root directory. 
-
-The concept of private path is inherited from Chubby where it's possible to place the application's `src` outside the `public_html` directory. This is optional, but the `PRIVATE_APP_PATH` must exist and point to the right location.
-
-So let's say that your application's tree is similar to this: 
-
-    public_html
-      +-- my-app
-            +-- src
-                  +-- classes
-                  +-- views
-                  +-- vendor
-
-Then you should define the constant like this: 
-
-    define('PRIVATE_APP_PATH', 'path/to/public_html/my-app');
-
