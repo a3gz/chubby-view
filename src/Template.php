@@ -13,7 +13,7 @@ class Template
     /**
      * @var mixed 
      */
-    protected $appPath;
+    protected $basePath;
 
     /**
      * @var array
@@ -63,9 +63,9 @@ class Template
      * 1.   The components defined in the sub-class are merged with those defined by the 
      *      class' parent. 
      */
-    public function __construct( $appPath = null )
+    public function __construct( $basePath = null )
     {
-        $this->appPath = rtrim($appPath, '/'); 
+        $this->basePath = rtrim($basePath, '/'); 
 
         // Merge components from the child class
         $class = get_called_class();
@@ -139,11 +139,11 @@ class Template
     protected function getPreparedPath( $path ) 
     {
         if ( substr( $path, 0, 1 ) != '/' ) {
-            $appPath = '';
-            if ( !empty($this->appPath) ) {
-                $appPath = $this->appPath . '/';
+            $basePath = '';
+            if ( !empty($this->basePath) ) {
+                $basePath = $this->basePath . '/';
             }
-            $path = realpath( $appPath . $path );
+            $path = realpath( $basePath . $path );
         }
         return $path;
     } // getPreparedPath()
