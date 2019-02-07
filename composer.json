@@ -1,24 +1,24 @@
 {
-    "name": "a3gz/chubby-view",
-    "type": "library",
-    "description": "PHP Renderer for Chubby",
-    "keywords": ["chubby", "render", "view", "template", "slim"],
-    "homepage": "https://github.com/a3gz/chubby-view",
-    "license": "MIT",
-	"authors": [
-		{
-            "name": "Alejandro Arbiza",
-            "email": "alejandro@roetal.com",
-            "homepage": "https://www.roetal.com"
-		}
-	],
-    "require": {
-        "a3gz/php-simple-html-dom-parser": "dev-master",
-        "psr/http-message": "^1.0"
-    }, 
-    "autoload": {
-        "psr-4": {
-            "Chubby\\View\\": "src"
-        }
+  "name": "a3gz/chubby-view",
+  "type": "library",
+  "description": "PHP Renderer for Chubby",
+  "keywords": ["chubby", "render", "view", "template", "slim"],
+  "homepage": "https://github.com/a3gz/chubby-view",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alejandro Arbiza",
+      "email": "alejandro@roetal.com",
+      "homepage": "https://www.roetal.com"
     }
+ ],
+  "require": {
+    "a3gz/php-simple-html-dom-parser": "dev-master",
+    "psr/http-message": "^1.0"
+  }, 
+  "autoload": {
+    "psr-4": {
+      "Chubby\\View\\": "src"
+    }
+  }
 }
