@@ -68,6 +68,12 @@ class Template
     $this->template = $this->getPreparedPath( $this->template );
   }
 
+  public function __call( $key, $args ) {
+    if ( isset($this->helpers[$key]) && is_callable($this->helpers[$key]) ) {
+      return call_user_func_array($this->helpers[$key], $args);
+    }
+  }
+
   /**
    * Getter to allow views to access the data passed in for them.
    *
@@ -78,15 +84,19 @@ class Template
     if ( isset($this->data[$key] ) ) {
       return $this->data[$key];
     }
+    if ( isset($this->helpers[$key] ) ) {
+      return $this->helpers[$key];
+    }
   }
 
   public function __isset( $key ) {
-      return isset($this->data[$key]);
+    return isset($this->data[$key]);
   }
 
   public function addHelper($key, $value) {
     $key = str_replace(' ', '_', $key);
     $this->helpers[$key] = $value;
+    return $this;
   }
 
   /**
