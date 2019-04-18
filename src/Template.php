@@ -20,6 +20,8 @@ class Template
    */
   protected $data = [];
 
+  protected $helpers = [];
+
   protected $template;
 
   /**
@@ -80,6 +82,11 @@ class Template
 
   public function __isset( $key ) {
       return isset($this->data[$key]);
+  }
+
+  public function addHelper($key, $value) {
+    $key = str_replace(' ', '_', $key);
+    $this->helpers[$key] = $value;
   }
 
   /**
@@ -155,16 +162,16 @@ class Template
       ? $this->components[$component]
       : $component;
     $componentFileName = $this->getPreparedPath( $componentFileName );
-    if ( !is_readable($componentFileName)  ) {
+    if ( !is_readable($componentFileName) ) {
       throw new \Exception("Unable to render `{$component}` (`{$componentFileName}`).");
     }
     // Export data to the output
-    foreach( $this->data as $__key => $__value ) {
+    foreach ( $this->data as $__key => $__value ) {
       $$__key = $__value;
     }
 
     if ( ($data != null) && is_array($data) ) {
-      foreach( $data as $__key => $__value ) {
+      foreach ( $data as $__key => $__value ) {
         $$__key = $__value;
       }
     }
