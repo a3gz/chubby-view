@@ -5,7 +5,7 @@
  */
 namespace Chubby\View;
 
-use Sunra\PhpSimpleHtmlDomParser\HtmlDomParser;
+use A3gZ\PhpDomParser as HtmlDomParser;
 
 class Template
 {
