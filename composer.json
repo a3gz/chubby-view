@@ -12,12 +12,6 @@
       "homepage": "https://www.roetal.com"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/a3gz/php-dom-parser"
-    }
-  ],    
   "require": {
     "a3gz/php-dom-parser": "1.0.0",
     "psr/http-message": "^1.0"
