@@ -13,6 +13,8 @@ class Template
 
   protected $components = [];
 
+  protected $renderedComponents = [];
+
   /**
    * $data
    *
@@ -108,12 +110,19 @@ class Template
    * @return $this
    */
   public function define( $name, $path ) {
-    $path .= '.php';
-    $prepared = $this->getPreparedPath( $path );
-    if ( !is_readable($prepared) ) {
+    if (!preg_match('#^.+(.php|.html)$#', $path)) {
+      $path .= '.php';
+    }
+    $prepared = $this->getPreparedPath($path);
+    if (!is_readable($prepared)) {
       throw new \Exception("The component `{$name}` could not by found at `{$path}`");
     }
     $this->components[$name] = $path;
+    return $this;
+  }
+
+  public function defineRendered($name, $content) {
+    $this->renderedComponents[$name] = $content;
     return $this;
   }
 
@@ -168,29 +177,39 @@ class Template
    */
   public function render( $component, $data = null ) {
     $component = trim($component);
-    $componentFileName = isset($this->components[$component]) 
-      ? $this->components[$component]
-      : $component;
-    $componentFileName = $this->getPreparedPath( $componentFileName );
-    if ( !is_readable($componentFileName) ) {
-      throw new \Exception("Unable to render `{$component}` (`{$componentFileName}`).");
+    $componentFileName = $component;
+    $componentContent = null;
+    if (isset($this->components[$component])) {
+      $componentFileName = $this->components[$component];
+    } elseif (isset($this->renderedComponents[$component])) {
+      $componentContent = $this->renderedComponents[$component];
     }
-    // Export data to the output
-    foreach ( $this->data as $__key => $__value ) {
-      $$__key = $__value;
-    }
-
-    if ( ($data != null) && is_array($data) ) {
-      foreach ( $data as $__key => $__value ) {
+    if ($componentContent === null) {
+      $componentFileName = $this->getPreparedPath($componentFileName);
+      if (!is_readable($componentFileName)) {
+        throw new \Exception("Unable to render `{$component}` (`{$componentFileName}`).");
+      }
+      // Export data to the output
+      foreach ($this->data as $__key => $__value) {
         $$__key = $__value;
+      }
+
+      if (($data != null) && is_array($data)) {
+        foreach ($data as $__key => $__value) {
+          $$__key = $__value;
+        }
       }
     }
 
     try {
       ob_start();
-        include $componentFileName;
+        if ($componentContent === null) {
+          include $componentFileName;
+        } else {
+          echo $componentContent;
+        }
         $html = ob_get_contents();
-        $html = $this->preProcessComponent( $html );
+        $html = $this->preProcessComponent($html);
       ob_end_clean();
     } catch( \Exception $e ) {
       echo $e;
