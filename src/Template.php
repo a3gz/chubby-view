@@ -1,14 +1,15 @@
 <?php
+
 /**
  * @copyright Copyright (c) Alejandro Arbiza
  * @license   http://www.roetal.com/license/mit (MIT License)
  */
+
 namespace Chubby\View;
 
 use A3gZ\PhpDomParser\HtmlDomParser;
 
-class Template
-{
+class Template {
   protected $basePath;
 
   protected $components = [];
@@ -50,28 +51,28 @@ class Template
     'chubby-styles' => [],
   ];
 
-  public function __construct( $basePath = null ) {
+  public function __construct($basePath = null) {
     $this->basePath = rtrim($basePath, '/');
     // Merge components from the child class
     $class = get_called_class();
-    while ( $class = get_parent_class($class) ) {
+    while ($class = get_parent_class($class)) {
       $components = get_class_vars($class)['components'];
       $clean = [];
-      foreach( $components as $name => $path ) {
+      foreach ($components as $name => $path) {
         $path = realpath($path);
-        if ( !is_readable( $path ) ) {
-            throw new \Exception("The component {$name} was not found at {$path}.");
+        if (!is_readable($path)) {
+          throw new \Exception("The component {$name} was not found at {$path}.");
         }
-        $clean[$name] = $this->getPreparedPath( $path );
+        $clean[$name] = $this->getPreparedPath($path);
       }
       $this->components += $clean;
     }
     // Complete the template file name
-    $this->template = $this->getPreparedPath( $this->template );
+    $this->template = $this->getPreparedPath($this->template);
   }
 
-  public function __call( $key, $args ) {
-    if ( isset($this->helpers[$key]) && is_callable($this->helpers[$key]) ) {
+  public function __call($key, $args) {
+    if (isset($this->helpers[$key]) && is_callable($this->helpers[$key])) {
       return call_user_func_array($this->helpers[$key], $args);
     }
   }
@@ -82,16 +83,16 @@ class Template
    * @param string $key The variable name.
    * @return mixed The given value.
    */
-  public function __get( $key ) {
-    if ( isset($this->data[$key] ) ) {
+  public function __get($key) {
+    if (isset($this->data[$key])) {
       return $this->data[$key];
     }
-    if ( isset($this->helpers[$key] ) ) {
+    if (isset($this->helpers[$key])) {
       return $this->helpers[$key];
     }
   }
 
-  public function __isset( $key ) {
+  public function __isset($key) {
     return isset($this->data[$key]);
   }
 
@@ -109,7 +110,7 @@ class Template
    * @param string $path
    * @return $this
    */
-  public function define( $name, $path ) {
+  public function define($name, $path) {
     if (!preg_match('#^.+(.php|.html)$#', $path)) {
       $path .= '.php';
     }
@@ -126,13 +127,13 @@ class Template
     return $this;
   }
 
-  protected function getPreparedPath( $path ) {
-    if ( substr( $path, 0, 1 ) != '/' ) {
+  protected function getPreparedPath($path) {
+    if (substr($path, 0, 1) != '/') {
       $basePath = '';
-      if ( !empty($this->basePath) ) {
+      if (!empty($this->basePath)) {
         $basePath = $this->basePath . '/';
       }
-      $path = realpath( $basePath . $path );
+      $path = realpath($basePath . $path);
     }
     return $path;
   }
@@ -144,13 +145,13 @@ class Template
    *
    * @return string The modified view, stripped from the special content.
    */
-  private function preProcessComponent( $input ) {
-    $dom = HtmlDomParser::fromString( $input );
+  private function preProcessComponent($input) {
+    $dom = HtmlDomParser::fromString($input);
     $output = $input;
-    if ( is_object($dom) ) {
-      foreach( $this->placeholders as $placeholder => $content ) {
-        $nodes = $dom->find( $placeholder );
-        foreach( $nodes as $node ) {
+    if (is_object($dom)) {
+      foreach ($this->placeholders as $placeholder => $content) {
+        $nodes = $dom->find($placeholder);
+        foreach ($nodes as $node) {
           $this->placeholders[$placeholder][] = $node->innerText();
           $node->outerText = '';
         }
@@ -160,8 +161,8 @@ class Template
     return $output;
   }
 
-  public function registerPlaceholder( $placeholder ) {
-    if ( !isset($this->placeholders[$placeholder]) ) {
+  public function registerPlaceholder($placeholder) {
+    if (!isset($this->placeholders[$placeholder])) {
       $this->placeholders[$placeholder] = [];
     }
     return $this;
@@ -175,7 +176,7 @@ class Template
    * @param string $component A previouly defined
    * @param mixed $data Additional data passed to the renderer at render-time
    */
-  public function render( $component, $data = null ) {
+  public function render($component, $data = null) {
     $component = trim($component);
     $componentFileName = $component;
     $componentContent = null;
@@ -203,15 +204,15 @@ class Template
 
     try {
       ob_start();
-        if ($componentContent === null) {
-          include $componentFileName;
-        } else {
-          echo $componentContent;
-        }
-        $html = ob_get_contents();
-        $html = $this->preProcessComponent($html);
+      if ($componentContent === null) {
+        include $componentFileName;
+      } else {
+        echo $componentContent;
+      }
+      $html = ob_get_contents();
+      $html = $this->preProcessComponent($html);
       ob_end_clean();
-    } catch( \Exception $e ) {
+    } catch (\Exception $e) {
       echo $e;
       die();
     }
@@ -222,8 +223,8 @@ class Template
    * Sets data that will be available in the views.
    * @param array $data An array of key=>value pairs.
    */
-  public function setData( array $data ) {
-    foreach( $data as $key => $value ) {
+  public function setData(array $data) {
+    foreach ($data as $key => $value) {
       $this->data[$key] = $value;
     }
     return $this;
@@ -231,27 +232,27 @@ class Template
 
   public function getView() {
     $buffer = 'empty-view';
-    if ( is_readable( $this->template ) ) {
+    if (is_readable($this->template)) {
       ob_start();
-        include $this->template;
-        $buffer = ob_get_contents();
+      include $this->template;
+      $buffer = ob_get_contents();
       ob_end_clean();
       $dirty = false;
-      $dom = HtmlDomParser::fromString( $buffer );
+      $dom = HtmlDomParser::fromString($buffer);
       // Inject custom placeholders content into the final page.
-      foreach( $this->placeholders as $placeholder => $content ) {
+      foreach ($this->placeholders as $placeholder => $content) {
         $i = 0;
-        while ( $domNode = $dom->find($placeholder, $i++) ) {
+        while ($domNode = $dom->find($placeholder, $i++)) {
           $outerText = $domNode->outerText;
-          if ( count($content) ) {
-              $outerText = implode($content, "\n"); 
+          if (count($content)) {
+            $outerText = implode("\n", $content);
           }
           $domNode->outerText = $outerText;
           $dirty = true;
         }
       }
       // Save changes to the DOM
-      if ( $dom && $dirty ) {
+      if ($dom && $dirty) {
         $buffer = $dom->save();
       }
     }
@@ -266,13 +267,13 @@ class Template
    * @param mixed $content Optional custom content
    * @return \Psr\Http\Message\ResponseInterface
    */
-  public function write( \Psr\Http\Message\ResponseInterface $response, $content = null ) {
+  public function write(\Psr\Http\Message\ResponseInterface $response, $content = null) {
     $body = $response->getBody();
-    if ( $content === null ) {
+    if ($content === null) {
       $content = $this->getView();
     }
-    $body->write( $content );
-    $response = $response->withBody( $body );
+    $body->write($content);
+    $response = $response->withBody($body);
     return $response;
   }
 } // class
