@@ -13,7 +13,6 @@
     }
   ],
   "require": {
-    "a3gz/php-dom-parser": "1.1.0",
     "psr/http-message": "^1.0"
   }, 
   "autoload": {
