@@ -7,8 +7,6 @@
 
 namespace Chubby\View;
 
-use A3gZ\PhpDomParser\HtmlDomParser;
-
 class Template {
   protected $basePath;
 
@@ -146,17 +144,30 @@ class Template {
    * @return string The modified view, stripped from the special content.
    */
   private function preProcessComponent($input) {
-    $dom = HtmlDomParser::fromString($input);
     $output = $input;
-    if (is_object($dom)) {
-      foreach ($this->placeholders as $placeholder => $content) {
-        $nodes = $dom->find($placeholder);
-        foreach ($nodes as $node) {
-          $this->placeholders[$placeholder][] = $node->innerText();
-          $node->outerText = '';
+    $placeholders = array_keys($this->placeholders);
+    foreach ($placeholders as $placeholder) {
+      $otag = "<{$placeholder}>";
+      $ctag = "</{$placeholder}>";
+      do {
+        $tagBegin = stripos($output, $otag);
+        if ($tagBegin !== false) {
+          $tagEnd = strpos($output, $ctag, $tagBegin);
+          if ($tagEnd === false) {
+            throw new \Exception(
+              "Invalid view: closing tag missing for {$placeholder}"
+                . print_r($output, true)
+            );
+          }
+          $htmlStart = $tagBegin + strlen($otag);
+          $htmlLen = $tagEnd - $htmlStart;
+          $html = substr($output, $htmlStart, $htmlLen);
+
+          $this->placeholders[$placeholder][] = $html;
+          $output = substr($output, 0, $tagBegin)
+            . substr($output, $tagEnd + strlen($ctag));
         }
-      }
-      $output = $dom->save();
+      } while ($tagBegin !== false);
     }
     return $output;
   }
@@ -234,26 +245,36 @@ class Template {
     $buffer = 'empty-view';
     if (is_readable($this->template)) {
       ob_start();
-      include $this->template;
-      $buffer = ob_get_contents();
+        include $this->template;
+        $buffer = ob_get_contents();
       ob_end_clean();
-      $dirty = false;
-      $dom = HtmlDomParser::fromString($buffer);
+
       // Inject custom placeholders content into the final page.
       foreach ($this->placeholders as $placeholder => $content) {
-        $i = 0;
-        while ($domNode = $dom->find($placeholder, $i++)) {
-          $outerText = $domNode->outerText;
+        if (!count($content)) continue;
+
+        $tagsCandidates = [
+          "<{$placeholder}></{$placeholder}>",
+          "<{$placeholder}/>",
+          "<{$placeholder} />",
+        ];
+
+        $ti = 0;
+        do {
+          $tagx = $tagsCandidates[$ti];
+          $tagPos = stripos($buffer, $tagx);
+          $ti += 1;
+        } while ($tagPos === false && $ti < 3);
+
+        if ($tagPos !== false) {
+          $tagLen = strlen($tagsCandidates[$ti - 1]);
           if (count($content)) {
-            $outerText = implode("\n", $content);
+            $html = implode("\n", $content);
+            $buffer = substr($buffer, 0, $tagPos)
+              . $html
+              . substr($buffer, $tagPos + $tagLen);
           }
-          $domNode->outerText = $outerText;
-          $dirty = true;
         }
-      }
-      // Save changes to the DOM
-      if ($dom && $dirty) {
-        $buffer = $dom->save();
       }
     }
     return $buffer;
