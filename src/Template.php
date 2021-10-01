@@ -136,6 +136,10 @@ class Template {
     return $path;
   }
 
+  public function isDefined($name) {
+    return isset($this->components[$name]);
+  }
+
   /**
    * Scan views for placeholders.
    *
@@ -245,8 +249,8 @@ class Template {
     $buffer = 'empty-view';
     if (is_readable($this->template)) {
       ob_start();
-        include $this->template;
-        $buffer = ob_get_contents();
+      include $this->template;
+      $buffer = ob_get_contents();
       ob_end_clean();
 
       // Inject custom placeholders content into the final page.
