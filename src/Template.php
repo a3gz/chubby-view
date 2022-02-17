@@ -109,7 +109,7 @@ class Template {
       $pathsArray = [$pathsArray];
     }
     foreach ($pathsArray as $path) {
-      $absFilename = HOME_PATH . $path;
+      $absFilename = $path;
       if (!is_readable($absFilename)) {
         break;
       }
@@ -132,7 +132,7 @@ class Template {
       $pathsArray = [$pathsArray];
     }
     foreach ($pathsArray as $path) {
-      $absFilename = HOME_PATH . $path;
+      $absFilename = $path;
       if (!is_readable($absFilename)) {
         break;
       }
