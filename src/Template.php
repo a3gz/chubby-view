@@ -9,10 +9,13 @@ namespace Chubby\View;
 
 class Template {
   protected $basePath;
-
   protected $components = [];
-
   protected $renderedComponents = [];
+
+  protected $bundledStyles = [];
+  protected $bundledJavascript = [];
+  protected $requiredStyles = [];
+  protected $requiredJavascript = [];
 
   /**
    * $data
@@ -100,6 +103,53 @@ class Template {
     return $this;
   }
 
+
+  public function bundleJs($pathsArray) {
+    if (!is_array($pathsArray)) {
+      $pathsArray = [$pathsArray];
+    }
+    foreach ($pathsArray as $path) {
+      $absFilename = HOME_PATH . $path;
+      if (!is_readable($absFilename)) {
+        break;
+      }
+      if (!isset($this->bundledJavascript[$path])) {
+        $this->bundledJavascript[$path] = 'ok';
+        ob_start();
+        echo '<chubby-scripts><script>';
+        echo "\n/** Bundle JS: {$path} */\n";
+        echo file_get_contents($absFilename);
+        echo "\n</script></chubby-scripts>";
+        $buff = ob_get_contents();
+        ob_end_clean();
+        echo $buff;
+      }
+    }
+  }
+
+  public function bundleCss($pathsArray) {
+    if (!is_array($pathsArray)) {
+      $pathsArray = [$pathsArray];
+    }
+    foreach ($pathsArray as $path) {
+      $absFilename = HOME_PATH . $path;
+      if (!is_readable($absFilename)) {
+        break;
+      }
+      if (!isset($this->bundledStyles[$path])) {
+        $this->bundledStyles[$path] = 'ok';
+        ob_start();
+        echo '<chubby-styles><style>';
+        echo "\n/** Bundle CSS: {$path} */\n";
+        echo file_get_contents($absFilename);
+        echo "\n</style></chubby-styles>";
+        $buff = ob_get_contents();
+        ob_end_clean();
+        echo $buff;
+      }
+    }
+  }
+
   /**
    * Register a component in the template so later we can render it via the
    * name as in $this->render('nice-name').
@@ -174,6 +224,53 @@ class Template {
       } while ($tagBegin !== false);
     }
     return $output;
+  }
+
+  public function requireJs($pathsArray) {
+    if (!is_array($pathsArray)) {
+      $pathsArray = [$pathsArray];
+    }
+
+    ob_start();
+    echo '<!--Required scripts-->';
+    echo '<chubby-scripts>';
+    foreach ($pathsArray as $path) {
+      if (substr($path, 0, 4) !== 'http') {
+        continue;
+      }
+      $hash = md5($path);
+      if (!isset($this->requiredJavascript[$hash])) {
+        $this->requiredJavascript[$hash] = 'ok';
+        echo "<script src=\"{$path}\"></script>\n";
+      }
+    }
+    echo "\n</chubby-scripts>";
+    $buff = ob_get_contents();
+    ob_end_clean();
+    echo $buff;
+  }
+
+  public function requireCss($pathsArray) {
+    if (!is_array($pathsArray)) {
+      $pathsArray = [$pathsArray];
+    }
+
+    ob_start();
+    echo '<!--Required styles-->';
+    echo '<chubby-styles>';
+    foreach ($pathsArray as $path) {
+      if (substr($path, 0, 4) !== 'http') {
+        continue;
+      }
+      if (!isset($this->requiredStyles[$path])) {
+        $this->requiredStyles[$path] = 'ok';
+        echo "<link type=\"text/css\" href=\"{$path}\" />\n";
+      }
+    }
+    echo "\n</chubby-styles>";
+    $buff = ob_get_contents();
+    ob_end_clean();
+    echo $buff;
   }
 
   public function registerPlaceholder($placeholder) {
